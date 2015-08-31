@@ -58,6 +58,15 @@ app.use(require('express-session')());
 
 app.use(require('body-parser')());
 
+
+
+
+// usernames which are currently connected to the chat
+var usernames = {};
+var numUsers = 0;
+var username = '';
+
+
 app.get('/', function(req, res) {
 	res.render('home');
 });
@@ -66,7 +75,7 @@ app.post('/enter', function(req, res) {
 	console.log('Form (from querystring): ' + req.query.form);
 	var name = req.body.name;
 	console.log("You have entered: "+name);
-	req.session.userName = name;
+	
 
 	return res.redirect(303, '/chatroom'); 
 });
@@ -76,7 +85,7 @@ app.get('/chatroom', function(req, res, next) {
 	 console.log(result.id+": "+result.userName);
  });
  
- console.log("Session: userName -> "+req.session.userName);
+ 
 /* 
 Chat
   .build({ userName: 'Eileen Wei 3', chatContent: 'This is a testing msg 3' })
@@ -90,7 +99,7 @@ Chat
  
  */
 	chat.create({
-	  userName: req.session.userName,
+	  userName: socket.username ,
 	  chatContent: 'This is a testing msg 3'
 	}).then(function(john) {
 	  
@@ -104,50 +113,60 @@ Chat
  });
 });
 
-// usernames which are currently connected to the chat
-var usernames = {};
-var numUsers = 0;
+
 
 //socket.io
 io.on('connection', function(socket){
-  console.log('a user connected');
+  
 	
-  socket.on('disconnect', function(){
-    console.log('user disconnected');
-  });
-	socket.on('chat message', function(msg){
-	    console.log('message: ' + msg);
-			io.emit('chat message', msg);
-	  });
-		
+ 
+	
 	var addedUser = false;
-
-	// when the client emits 'new message', this listens and executes
-	socket.on('new message', function (data) {
-		// we tell the client to execute 'new message'
-		socket.broadcast.emit('new message', {
-			username: socket.username,
-		  message: data
-		});
-	});	
+	
+	
 	
 // when the client emits 'add user', this listens and executes
   socket.on('add user', function (username) {
+		console.log('a user <'+username+ '> is connected');
     // we store the username in the socket session for this client
     socket.username = username;
-    // add the client's username to the global list
     usernames[username] = username;
     ++numUsers;
     addedUser = true;
-    socket.emit('login', {
-      numUsers: numUsers
-    });
+	  chat.findAll().then(function(result){
+	 	 console.log("Number of records: "+result.length);
+	 
+     socket.emit('login', {
+       numUsers: numUsers,
+ 			 msgHistory: result
+     });
+	  });
+   
+		
     // echo globally (all clients) that a person has connected
     socket.broadcast.emit('user joined', {
       username: socket.username,
       numUsers: numUsers
     });
   });
+
+	// when the client emits 'new message', this listens and executes
+	socket.on('new message', function (data) {
+		chat.create({
+		  userName: socket.username ,
+		  chatContent: data
+		}).then(function(result) {
+			// we tell the client to execute 'new message'
+			console.log("broadcast.emit new message...");
+			socket.broadcast.emit('new message', {
+				username: socket.username,
+			  message: data
+			});
+		});
+		
+	});	
+	
+
 
   // when the client emits 'typing', we broadcast it to others
   socket.on('typing', function () {
@@ -165,6 +184,7 @@ io.on('connection', function(socket){
 
   // when the user disconnects.. perform this
   socket.on('disconnect', function () {
+		 console.log('user disconnected');
     // remove the username from global usernames list
     if (addedUser) {
       delete usernames[socket.username];
