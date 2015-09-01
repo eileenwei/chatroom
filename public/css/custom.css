@@ -1,3 +1,125 @@
+body{
+	background: #e7e7e7;
+	letter-spacing: 1.2px;
+}
+
+ul{
+	list-style-type:none;
+	margin: 0;
+	padding: 0;
+}
+.center{
+	display:block;
+	margin: 0 auto;
+	
+}
+.pages{
+	
+}
+.page{
+	background: #fff;
+	margin: 1%;
+	padding: 4% 2% 4% 2%;
+	color: #777;
+	 font-family: 'Open Sans', 'Lato', sans-serif;
+}
+.login.page{
+	
+	margin: 10% 10% 10% 10%;
+	padding: 4% 2% 4% 2%;
+	color: #777;
+}
+
+.login.page h2{
+	text-align:center;
+	line-height:2;
+}
+.inputfield{
+	width: 60%;]
+	font-size: 20px;
+	font-family: 'Open Sans', 'Lato', sans-serif;
+	background-color: transparent; 
+	border-style: solid; 
+	border-width: 0px 0px 2px 0px; 
+	border-color: #777;
+	border-radius: 0px;
+	padding-bottom: 10px;
+}
+.inputfield:focus, .inputfield:active {
+  box-shadow: none;
+	border-width: 0px 0px 2px 0px; 
+	border-color: #777;
+}
+::-webkit-input-placeholder {
+	font-size: 20px;
+   color: #e7e7e7;
+	
+}
+
+:-moz-placeholder { /* Firefox 18- */
+   color: #e7e7e7;  
+}
+
+::-moz-placeholder {  /* Firefox 19+ */
+   color: #e7e7e7;  
+}
+
+:-ms-input-placeholder {  
+   color: #e7e7e7;  
+}
 .chat{
 	display:none;
+}
+
+:focus {
+  outline-color: transparent;
+  outline-style: none;
+}
+
+
+.msgForm { 
+	padding: 3px; 
+	position: fixed; 
+	bottom: 0; 
+	width: 100%;
+	padding-bottom: 20px; 
+}
+.msgForm input { 
+	border: 0; 
+	padding: 10px; 
+	width: 90%; 
+	height: 100px;
+}
+
+.chatArea {
+  height: 100%;
+  padding-bottom: 60px;
+}
+
+.messages { 
+	list-style-type: none; margin: 0; padding: 0; 
+}
+.messages li { 
+	padding: 5px 10px; 
+}
+.messages li:nth-child(odd) { 
+	background: #eee; 
+}
+.red{
+	background-color: #d9534f;
+	
+}
+
+.username{
+	display:block;
+	font-weight:bold;
+}
+.timestamp{
+	float:right;
+	color:#777;
+	font-weight:normal;
+}
+.chatMsg{
+	padding: 10px;
+	padding-right:20px;
 }

@@ -46,7 +46,12 @@ $(function() {
 	
 	function loadChatHistory (data){
 		data.msgHistory.forEach(function(msg){
-			$('#messages').append($('<li>').text(msg.userName+": "+msg.chatContent));
+			var username = "<div class=\"username\"><span style=\"padding-right: 5px;\"><i class=\"fa fa-user\"></i></span>"+
+											msg.userName+"<span class=\"timestamp\">"+msg.createdAt+"</span></div>";
+			var chatContent = "<div class=\"chatMsg\">"+msg.chatContent+"</div>";
+			var item = "<li>"+username+chatContent+"</li>";
+			//$('#messages').append($('<li>').text(msg.userName+": "+msg.chatContent));
+			$('#messages').append(item);
 		});
 		  
 	
@@ -57,9 +62,9 @@ $(function() {
   function addParticipantsMessage (data) {
     var message = '';
     if (data.numUsers === 1) {
-      message += "there's 1 participant";
+      message += "-- There's 1 participant --";
     } else {
-      message += "there are " + data.numUsers + " participants";
+      message += "-- There are " + data.numUsers + " participants --";
     }
     log(message);
   }
@@ -86,7 +91,8 @@ $(function() {
 
   // Log a message
   function log (message, options) {
-    var $el = $('<li>').addClass('log').text(message);
+    var $el = $('<li>').addClass('log').css({"background": "rgba(217,83,79,0.5)","color":"#fff", "text-align":"center"}).text(message);
+		
     addMessageElement($el, options);
   }
 
@@ -100,11 +106,17 @@ $(function() {
       $typingMessages.remove();
     }
 
-    var $usernameDiv = $('<span class="username"/>')
-      .text(data.username)
-      .css('color', getUsernameColor(data.username));
-    var $messageBodyDiv = $('<span class="messageBody">')
+   //var $usernameDiv = $('<div class="username"/><span style=\"padding-right: 5px;\"><i class=\"fa fa-user\"></i></span>')
+   //   .text(data.username)
+   //   .css('color', getUsernameColor(data.username));
+	 var timestamp = new Date().toISOString();
+var $usernameDiv = "<div class=\"username\" style=\"color:"+getUsernameColor(data.username)+"\"><span style=\"padding-right: 5px;\"><i class=\"fa fa-user\"></i></span>"+
+								data.username+"<span class=\"timestamp\">"+timestamp+"</span></div>";	
+    var $messageBodyDiv = $('<div class="messageBody chatMsg">')
       .text(data.message);
+			
+
+				
 
     var typingClass = data.typing ? 'typing' : '';
     var $messageDiv = $('<li class="message"/>')
@@ -113,6 +125,7 @@ $(function() {
       .append($usernameDiv, $messageBodyDiv);
 
     addMessageElement($messageDiv, options);
+
 
    
   }
@@ -160,6 +173,7 @@ $(function() {
       $messages.append($el);
     }
     $messages[0].scrollTop = $messages[0].scrollHeight;
+		$("body").animate({ scrollTop: $messages[0].scrollHeight }, "slow");
   }
 
   // Prevents input from having injected markup
